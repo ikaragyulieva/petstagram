@@ -1,10 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
 
-</body>
-</html>
+<!-- Start First Pet Photo Post -->
+{% for photo in all_photos %}
+            <!-- Start Second Pet Photo Post -->
+            <div class="card">
+                <div class="top">
+                    <!-- User Details and image location -->
+                    <div class="userDetails">
+                        <a href="profile details">
+                            <div class="profilepic">
+                                <div class="profile_img">
+                                    <div class="image">
+                                        <img src="/static/images/person.png" alt="img8">
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <h3>
+                            <a href="profile details">
+                                <!-- if user has first name and last name -->
+                                Antonia Hristova
+                                <!-- else -->
+                                <!-- user username -->
+                            </a>
+                            <br>
+                            <!-- if the photo has location -->
+                            {% if photo.location %}
+                                <span>{{ photo.location }}</span>
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <!--  -->
+                </div>
+                <!-- Post image -->
+                <div class="imgBx" id="{{ photo.id }}">
+                    <img src="{% static 'images/dog-on-bed.jpg'%}" alt="post" class="cover">
+                </div>
+                <!-- -->
+
+                <div class="bottom">
+                    <!-- like and share buttons -->
+                    <div class="actionBtns">
+                        <div class="left">
+								<span class="heart">
+                                    <a href="{% url 'like' photo.id %}">
+                                        <!-- if user has liked the photo -->
+                                        {% if photo.like_set.all %}
+                                            <i class="fa-solid fa-heart" style="color: #ed4040;"></i>
+                                        <!-- else -->
+                                        {% else %}
+                                            <i class="fa-regular fa-heart"></i>
+                                        {% endif %}
+                                    </a>
+								</span>
+                            <a href="{% url 'share' photo.id %}">
+                                <i class="fa-solid fa-share"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- -->
+
+                    <a href="#">
+                        <p class="likes">{{ photo.like_set.count}}</p>
+                    </a>
+
+                    <!-- tagged pets -->
+                    {% for pet in photo.tagged_pets.all %}
+                        <a href="{% url 'pet-details' "username" pet.slug%}">
+                            <p class="message">
+                                <b>{{ pet.name }}</b>
+                            </p>
+                        </a>
+                    {% endfor %}
+                    <!--  -->
+
+                    <a href="{% url 'photo-details' photo.pk %}">
+                        <h4 class="details">See details</h4>
+                    </a>
+
+                    <h5 class="postTime">{{ photo.date_of_publication }}</h5>
+
+                    <!-- add comments section -->
+                    <div class="addComments">
+
+                        <form method="post" action="add comment">
+                            <label for="id_body">Body:</label>
+                            <textarea name="body" cols="40" rows="10" placeholder="Add comment..." maxlength="300"
+                                      required="" id="id_body"></textarea>
+                            <button type="submit">Post</button>
+                        </form>
+                    </div>
+                    <!--  -->
+                </div>
+            </div>
+            <!-- End Second Pet Photo Post -->
+{% endfor %}
+
+            

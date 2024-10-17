@@ -1,70 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<!-- Starts Head Section -->
-<head>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="icon" type="image/x-icon" href="/static/images/free-30-instagram-stories-icons23_122570.png">
-    <title>Petstagram</title>
-</head>
-<!-- End Head Section -->
+{% extends 'base.html' %}
+{% load static %}
 
-<!-- Starts Body Section -->
-<body>
+{% block content %}
 
-<!-- Starts Header Section with Navigation Bar -->
-<header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <!-- Link to Home Page -->
-                <a href="#">
-                    <img width="50px" src="/static/images/free-30-instagram-stories-icons23_122570.png" alt="img1">
-                </a>
-
-                <!-- Link to Home Page -->
-                <a class="home" href="#">
-                    <i>Petstagram</i>
-                </a>
-            </div>
-
-            <div class="nav-links">
-                <ul class="nav-group">
-                    <li class="nav-item">
-
-                        <!-- Link to Add Pet Page -->
-                        <a href="#">
-                            <i>Add Pet</i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-
-                        <!-- Link to Add Photo Page -->
-                        <a href="#">
-                            <i>Add Photo</i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-
-                        <!-- Link to Profile Page -->
-                        <a href="#">
-                            <i>Profile</i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- Log out -->
-                        <a href="#">
-                            <i>Log out</i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-<!-- End Header Section with Navigation Bar -->
-
-<!-- Starts Main Section -->
-<main>
     <div class="container">
         <div class="col-9">
 
@@ -80,7 +18,7 @@
                             <div class="profilepic">
                                 <div class="profile_img">
                                     <div class="image">
-                                        <img src="/static/images/person.png" alt="img8">
+                                        <img src="{% static 'images/person.png' %}" alt="img8">
                                     </div>
                                 </div>
                             </div>
@@ -97,20 +35,22 @@
                             <br>
 
                             <!-- IF the photo has location -->
-                            <span>Bansko, Bulgaria</span>
-
+                            {% if photo.location %}
+                            	<span>{{ photo.location}}</span>
+                            {% endif %} 
+                        
                             <!-- IF the viewer is the creator of the photo -->
                             <div class="edit-delete-btns">
 
                                 <!-- Link to Edit Pet Photo Page -->
-                                <a href="#">
-                                    <img class="edit-img" src="/static/images/edit-pen-icon-6.jpg"
+                                <a href="{% url 'edit-photo' photo.pk%}">
+                                    <img class="edit-img" src="{% static 'images/edit-pen-icon-6.jpg' %}"
                                          alt="edit button">
                                 </a>
 
                                 <!-- Link to Delete Pet Photo Page -->
                                 <a href="#">
-                                    <img class="bin-img" src="/static/images/icon-remove-22.jpg" alt="bin button">
+                                    <img class="bin-img" src="{% static 'images/icon-remove-22.jpg' %}" alt="bin button">
                                 </a>
                             </div>
                             <!-- End IF the viewer is the creator of the photo -->
@@ -124,7 +64,7 @@
                 <!-- Start Pet Photo -->
                 <div class="imgBx" id="place the id of the photo here">
                     <!-- Pet Photo -->
-                    <img src="/static/images/axolotl.jpeg" alt="post" class="cover">
+                    <img src="{% static 'images/axolotl.jpeg' %}" alt="post" class="cover">
                 </div>
                 <!-- End Pet Photo -->
 
@@ -138,11 +78,13 @@
                             <span class="heart">
 
                                     <!-- Link to Like Path -->
-                                    <a href="#">
+                                    <a href="{% url 'like' photo.id %}">
+                                        {% if photo.like_set.all %}
                                         <!-- if user has liked the photo -->
-                                        <!-- <i class="fa-solid fa-heart" style="color: #ed4040;"></i> -->
-                                        <!-- else -->
-                                        <i class="fa-regular fa-heart"></i>
+                                            <i class="fa-solid fa-heart" style="color: #ed4040;"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-heart"></i>
+                                        {% endif %}
                                     </a>
                             </span>
                             <!-- End Like Button -->
@@ -150,7 +92,7 @@
                             <!-- Start Share  Button -->
 
                             <!-- Link to Share Path -->
-                            <a href="#">
+                            <a href="{% url 'share' photo.id%}">
                                 <i class="fa-solid fa-share"></i>
                             </a>
                         </div>
@@ -158,30 +100,26 @@
                     <!-- End Like and Share Buttons Section -->
 
                     <!-- Number of Likes for the Photo -->
-                    <p class="likes">203 likes</p>
+                    <p class="likes">{{ likes.count }} likes</p>
 
                     <!-- Start Tagged Pets Section-->
+                    {% for tagged_pet in photo.tagged_pet.all %}
                     <!-- Link to First Tagged Pet Details Page -->
-                    <a href="#">
+                    <a href="{% url 'pet-details' "username" tagged_pet.slug%}">
                         <p class="message">
-                            <b>Sasho</b>
-                        </p>
-                    </a>
-                    <!-- Link to Second Tagged Pet Details Page -->
-                    <a href="#">
-                        <p class="message">
-                            <b>Some other fish</b>
+                            <b>{{ tagged_pet.name }}</b>
                         </p>
                     </a>
                     <!-- End Tagged Pets Section-->
-
+                    {% endfor %}
                     <!-- Photo description -->
-                    <p class="pet-details">This is my pet</p>
+                    <p class="pet-details">{{ photo.description}}</p>
 
                     <!-- Date of Publication or edit of the Photo -->
-                    <h5 class="postTime">19/09/2022</h5>
+                    <h5 class="postTime">{{ photo.date_of_publication}}</h5>
 
                     <!-- Start Comments Section -->
+                {% for coment in comments %}
                     <div class="comments">
                         <div class="top">
                             <div class="userDetails">
@@ -190,7 +128,7 @@
                                         <div class="profile_img">
                                             <div class="image">
                                                 <!-- User Profile Image -->
-                                                <img src="/static/images/person.png" alt="img8">
+                                                <img src="{% static 'images/person.png' %}" alt="img8">
                                             </div>
                                         </div>
                                     </div>
@@ -199,14 +137,15 @@
                                         <!-- User First and/or Last Name or username-->
                                         <a href="">Steven Ivanov</a>
                                         <!-- User Comment -->
-                                        - OMG where can i get one
+                                        {{ comment.text }}
                                     </p>
                                 </div>
-                                <span>Sept. 20, 2022, 5:02 p.m.</span>
+                                <span>{{ comment.date_time_of_publication}}</span>
                             </div>
                         </div>
                     </div>
                     <!-- End Comments Section -->
+                {% endfor %}
                 </div>
 
                 <!-- Start Add Comments Section -->
@@ -231,16 +170,4 @@
         </div>
     </div>
 
-</main>
-<!-- End Main Section -->
-
-<!-- Start Footer Section -->
-<div class="footer">
-		<span class="footer-section">
-			© 2024 SOFTUNI WORKSHOP FOR PYTHON WEB MODULE
-		</span>
-</div>
-<!-- End Footer Section -->
-
-</body>
-</html>
+{% endblock %}

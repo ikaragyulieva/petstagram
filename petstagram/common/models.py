@@ -20,6 +20,9 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
     )
 
+    class Meta:
+        ordering = ['-date_time_of_publication']
+
     def __str__(self):
         return self.text
 
